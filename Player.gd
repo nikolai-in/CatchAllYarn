@@ -1,3 +1,4 @@
+signal yarned
 extends Area2D
 
 export var speed = 400
@@ -6,7 +7,9 @@ var screen_size
 
 func _ready():
 	screen_size = get_viewport_rect().size
-	
+	hide()
+
+
 func _process(delta):
 	var mouse_position = get_global_mouse_position()
 	var heading = mouse_position - position
@@ -24,3 +27,13 @@ func _process(delta):
 			else:
 				$AnimatedSprite.animation = "down"
 			
+
+
+func _on_Player_body_entered(body):
+	emit_signal("yarned")
+	body.hide()
+
+
+func start(pos):
+	position = pos
+	show()
