@@ -10,15 +10,24 @@ func _ready():
 	$Player.connect("yarned", self, "_on_Yarn_cought")
 	new_game()
 
+func _process(_delta):
+	$HUD.update_score(score)
+	if misses < 0:
+		game_over()
+
 
 func game_over():
+	$HUD.show_game_over()
 	$YarnTimer.stop()
 
 
 func new_game():
 	score = 0
+	$HUD.update_score(score)
+	$HUD.show_message("Get Ready")
 	$Player.start($StartPosition.position)
 	$StartTimer.start()
+	
 
 
 func _on_StartTimer_timeout():
@@ -43,4 +52,5 @@ func _on_Yarn_miss():
 
 
 func _on_Yarn_cought():
+	misses = 3
 	score += 1
