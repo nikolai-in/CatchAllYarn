@@ -1,5 +1,8 @@
 name: "godot-ci export"
-on: push
+on:
+   push:
+    tags:
+      - "v*"
 
 env:
   GODOT_VERSION: 3.4.4
@@ -109,3 +112,25 @@ jobs:
         with:
           name: mac
           path: build/mac
+
+  release:
+    name: Release builds
+    needs: [export-windows, export-linux, export-mac]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download builds
+        uses: actions/download-artifact@v2
+
+      - name: Compress
+        shell: bash
+        run: for build in {mac,linux,windows}; do zip -r $build $build; done
+
+      - name: upload
+        uses: marvinpinto/action-automatic-releases@latest
+        with:
+          repo_token: "${{ secrets.GITHUB_TOKEN }}"
+          prerelease: false
+          files: |
+            linux.zip
+            mac.zip
+            windows.zip
